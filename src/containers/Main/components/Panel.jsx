@@ -4,10 +4,12 @@ import { Card, Typography, Button, Select, MenuItem } from '../../../components'
 import COUNTRIES from '../../../commons/constants/countries'
 import { CardPanelContentStyled, ItemStyled } from './style'
 
+//verificar se é mobile/pwa
 const navigatorHasShare = navigator.share
 
+//componente painel - panel
 function Panel({ updateAt, onChange, data, country, getCoviddata }) {
-  const { cases, recovered, deaths, todayCases, todayDeaths } = data
+  const { cases, recovered, deaths, todayCases, todayDeaths, critical } = data
 
   const renderCountries = (country, index) => (
     <MenuItem key={`country-${index}`} value={country.value}>
@@ -17,13 +19,17 @@ function Panel({ updateAt, onChange, data, country, getCoviddata }) {
       </ItemStyled>
     </MenuItem>
   )
-
-  const textCovid19 = `País: ${country} - recuperados: ${recovered}`
-
+  
+  //Dados que serão compartilhados por botao(site) ou por share(mobile - pwa)
+  //(Dados escolhidos - pais, recuperados e casos) no formato de string
+  const textCovid19 = `País: ${country} - recuperados: ${recovered} - Total de casos: ${cases}`
+  
+  //compartilhamento dos dados por botao
   const copyInfo = () => {
     navigator.clipboard.writeText(textCovid19)
   }
 
+  //compartilhamento das informações por mobila/pwa
   const shareInfo = () => {
     navigator.share({
       title: `Dados do Covid19 - ${country}`,
@@ -32,6 +38,8 @@ function Panel({ updateAt, onChange, data, country, getCoviddata }) {
     })
   }
 
+  //preparando componente para renderização
+  //share - mobile/pwa
   const renderShareButton = (
     <div>
       <Button variant="contained" color="primary" onClick={shareInfo}>
@@ -40,6 +48,7 @@ function Panel({ updateAt, onChange, data, country, getCoviddata }) {
     </div>
   )
 
+  //Componente para renderização do botao de copia - site
   const renderCopyButton = (
     <div>
       <Button variant="contained" color="primary" onClick={copyInfo}>
@@ -61,7 +70,11 @@ function Panel({ updateAt, onChange, data, country, getCoviddata }) {
             </Select>
           </div>
         </div>
-        {navigatorHasShare ? renderShareButton : renderCopyButton}
+        {
+          //operaçao terneraria para renderização botao copia(site) ou share(mobile/pwa)
+          //avaliação da propriedadde navigatorHasShare
+          navigatorHasShare ? renderShareButton : renderCopyButton
+        }
       </CardPanelContentStyled>
     </Card>
   )

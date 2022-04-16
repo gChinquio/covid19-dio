@@ -1,3 +1,5 @@
+//Configuração de PWA
+
 var CACHE_NAME = 'covid19-pwa';
 var urlsToCache = [
   '/'
